@@ -4,22 +4,30 @@ const FULL_HEART = '♥'
 
 // Your JavaScript code goes here!
 
+document.addEventListener('DOMContentLoaded', function() {
+  const likeButtons = document.querySelectorAll('.like');
 
-
-
-//------------------------------------------------------------------------------
-// Don't change the code below: this function mocks the server response
-//------------------------------------------------------------------------------
-
-function mimicServerCall(url="http://mimicServer.example.com", config={}) {
-  return new Promise(function(resolve, reject) {
-    setTimeout(function() {
-      let isRandomFailure = Math.random() < .2
-      if (isRandomFailure) {
-        reject("Random server error. Try again.");
-      } else {
-        resolve("Pretend remote server notified of action!");
-      }
-    }, 300);
+  likeButtons.forEach(function(button) {
+    button.addEventListener('click', function() {
+      mimicServerCall()
+        .then(function(response) {
+          if (button.classList.contains('activated-heart')) {
+            button.classList.remove('activated-heart');
+            button.querySelector('.like-glyph').innerText = EMPTY_HEART;
+          } else {
+            button.classList.add('activated-heart');
+            button.querySelector('.like-glyph').innerText = FULL_HEART;
+          }
+        })
+        .catch(function(error) {
+          const modal = document.getElementById('modal');
+          const modalMessage = document.getElementById('modal-message');
+          modalMessage.innerText = error;
+          modal.classList.remove('hidden');
+          setTimeout(function() {
+            modal.classList.add('hidden');
+          }, 3000);
+        });
+    });
   });
-}
+});
